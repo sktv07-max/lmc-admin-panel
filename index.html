@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Panel - Life Money Cash</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+  background:#f3f7f5;
+  color:#173b2b;
+}
+
+.header{
+  background:#08783f;
+  color:white;
+  padding:18px 15px;
+  text-align:center;
+}
+
+.header h2{
+  margin:0;
+  font-size:23px;
+}
+
+.header p{
+  margin:6px 0 0;
+  font-size:13px;
+  opacity:.9;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:15px;
+}
+
+.card{
+  background:white;
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+h3{
+  margin-top:0;
+  color:#08783f;
+}
+
+input,
+select,
+button{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  font-size:15px;
+}
+
+input,
+select{
+  border:1px solid #ccc;
+  margin-bottom:10px;
+}
+
+button{
+  border:0;
+  background:#08783f;
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
+  margin-top:5px;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+button.danger{
+  background:#c62828;
+}
+
+button.warning{
+  background:#ef8f00;
+}
+
+button.gray{
+  background:#666;
+}
+
+.menu{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.menu button{
+  margin:0;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.status{
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:10px;
+  font-size:14px;
+}
+
+.success{
+  background:#e7f7ed;
+  color:#08783f;
+}
+
+.error{
+  background:#ffe9e9;
+  color:#b00020;
+}
+
+.info{
+  background:#e8f1ff;
+  color:#174ea6;
+}
+
+.item{
+  border:1px solid #ddd;
+  border-radius:10px;
+  padding:13px;
+  margin-bottom:10px;
+  background:#fff;
+}
+
+.item b{
+  color:#08783f;
+}
+
+.row{
+  display:flex;
+  gap:8px;
+}
+
+.row button{
+  flex:1;
+}
+
+.small{
+  font-size:13px;
+  color:#666;
+  line-height:1.6;
+}
+
+.amount{
+  font-size:20px;
+  font-weight:bold;
+  color:#08783f;
+  margin:6px 0;
+}
+
+.login-box{
+  max-width:450px;
+  margin:30px auto;
+}
+
+.loading{
+  text-align:center;
+  padding:20px;
+  color:#666;
+}
+
+.deposit-approved{
+  border-left:5px solid #08783f;
+}
+
+.deposit-pending{
+  border-left:5px solid #ef8f00;
+}
+
+.deposit-rejected{
+  border-left:5px solid #c62828;
+}
+
+hr{
+  border:0;
+  border-top:1px solid #eee;
+  margin:12px 0;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<div class="header">
+
+  <h2>🔐 Life Money Cash</h2>
+
+  <p>Admin Panel</p>
+
+</div>
+
+
+<div class="container">
+
+
+<!-- LOGIN -->
+
+<div id="loginBox" class="card login-box">
+
+  <h3>🔐 Admin Login</h3>
+
+  <div id="loginStatus"></div>
+
+  <input
+    type="password"
+    id="adminPassword"
+    placeholder="Admin Password"
+    autocomplete="off"
+  >
+
+  <button onclick="adminLogin()">
+    Login
+  </button>
+
+</div>
+
+
+
+<!-- ADMIN AREA -->
+
+<div id="adminArea" class="hidden">
+
+
+  <div class="card">
+
+    <div class="row">
+
+      <button onclick="loadDashboard()">
+        📊 Dashboard
+      </button>
+
+      <button
+        onclick="adminLogout()"
+        class="danger"
+      >
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- MENU -->
+
+  <div class="menu">
+
+    <button onclick="loadDashboard()">
+      📊 Dashboard
+    </button>
+
+    <button onclick="loadUsers()">
+      👥 Users
+    </button>
+
+    <button onclick="loadDeposits()">
+      💰 Deposits
+    </button>
+
+    <button onclick="loadWithdrawals()">
+      💸 Withdrawals
+    </button>
+
+  </div>
+
+
+
+  <!-- DASHBOARD -->
+
+  <div
+    id="dashboardSection"
+    class="card"
+  >
+
+    <h3>📊 Dashboard</h3>
+
+    <div id="dashboardStatus"></div>
+
+    <div id="dashboardData">
+
+      <div class="loading">
+        Loading...
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- USERS -->
+
+  <div
+    id="usersSection"
+    class="card hidden"
+  >
+
+    <h3>👥 Users</h3>
+
+    <div id="usersStatus"></div>
+
+    <div id="usersData">
+
+      <div class="loading">
+        Loading...
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- DEPOSITS -->
+
+  <div
+    id="depositsSection"
+    class="card hidden"
+  >
+
+    <h3>💰 Deposit Requests</h3>
+
+    <div id="depositsStatus"></div>
+
+    <div id="depositsData">
+
+      <div class="loading">
+        Loading...
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- WITHDRAWALS -->
+
+  <div
+    id="withdrawalsSection"
+    class="card hidden"
+  >
+
+    <h3>💸 Withdrawal Requests</h3>
+
+    <div id="withdrawalsStatus"></div>
+
+    <div id="withdrawalsData">
+
+      <div class="loading">
+        Loading...
+      </div>
+
+    </div>
+
+  </div>
+
+
+</div>
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================================
+   API
+   ===================================================== */
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbw--zgQcMdjyGMkVrRFxzluD6wa6Zy-s9QMBuyyHBdfUy2-HSZ49HS8WQaFzYo1NO4/exec";
+
+
+
+/* =====================================================
+   ESCAPE HTML
+   ===================================================== */
+
+function escapeHtml(value){
+
+  return String(
+    value === null ||
+    value === undefined
+      ? ""
+      : value
+  )
+  .replace(/&/g,"&")
+  .replace(/</g,"<")
+  .replace(/>/g,">")
+  .replace(/"/g,""")
+  .replace(/'/g,"'");
+
+}
+
+
+
+/* =====================================================
+   VALUE HELPER
+   ===================================================== */
+
+function valueOf(obj,...keys){
+
+  if(!obj){
+    return "";
+  }
+
+  for(const key of keys){
+
+    if(
+      Object.prototype.hasOwnProperty.call(
+        obj,
+        key
+      )
+    ){
+
+      const value=obj[key];
+
+      if(
+        value !== null &&
+        value !== undefined &&
+        String(value).trim() !== ""
+      ){
+
+        return value;
+
+      }
+
+    }
+
+  }
+
+  return "";
+
+}
+
+
+
+/* =====================================================
+   NUMBER
+   ===================================================== */
+
+function numberValue(value){
+
+  if(
+    value === null ||
+    value === undefined ||
+    value === ""
+  ){
+
+    return 0;
+
+  }
+
+  const n =
+    Number(
+      String(value)
+        .replace(/[^\d.-]/g,"")
+    );
+
+  return Number.isFinite(n)
+    ? n
+    : 0;
+
+}
+
+
+
+/* =====================================================
+   API POST
+   ===================================================== */
+
+async function apiPost(
+  action,
+  data={}
+){
+
+  try{
+
+    const response =
+      await fetch(
+        API_URL,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "text/plain;charset=utf-8"
+          },
+
+          body:JSON.stringify({
+
+            action:action,
+
+            ...data
+
+          })
+        }
+      );
+
+
+    const text =
+      await response.text();
+
+
+    if(!text){
+
+      return {
+        success:false,
+        message:"Empty server response"
+      };
+
+    }
+
+
+    try{
+
+      return JSON.parse(text);
+
+    }catch(error){
+
+      console.log(
+        "API RAW RESPONSE:",
+        text
+      );
+
+      return {
+        success:false,
+        message:
+          "Invalid server response"
+      };
+
+    }
+
+  }catch(error){
+
+    console.log(error);
+
+    return {
+      success:false,
+      message:
+        "Server connection failed"
+    };
+
+  }
+
+}
+
+
+
+/* =====================================================
+   STATUS
+   ===================================================== */
+
+function showStatus(
+  id,
+  message,
+  type="info"
+){
+
+  const el =
+    document.getElementById(id);
+
+  if(!el){
+    return;
+  }
+
+  el.innerHTML =
+    '<div class="status '+type+'">'+
+    escapeHtml(message)+
+    '</div>';
+
+}
+
+
+
+/* =====================================================
+   TOKEN
+   ===================================================== */
+
+function getToken(){
+
+  return localStorage.getItem(
+    "LMC_ADMIN_TOKEN"
+  ) || "";
+
+}
+
+
+
+/* =====================================================
+   LOGIN
+   ===================================================== */
+
+async function adminLogin(){
+
+  const password =
+    document
+      .getElementById(
+        "adminPassword"
+      )
+      .value
+      .trim();
+
+
+  if(!password){
+
+    showStatus(
+      "loginStatus",
+      "Admin password দিন",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  showStatus(
+    "loginStatus",
+    "Login হচ্ছে...",
+    "info"
+  );
+
+
+  const result =
+    await apiPost(
+      "adminLogin",
+      {
+        password:password
+      }
+    );
+
+
+  if(
+    result &&
+    result.success &&
+    result.token
+  ){
+
+    localStorage.setItem(
+      "LMC_ADMIN_TOKEN",
+      result.token
+    );
+
+
+    document
+      .getElementById(
+        "loginBox"
+      )
+      .classList.add("hidden");
+
+
+    document
+      .getElementById(
+        "adminArea"
+      )
+      .classList.remove("hidden");
+
+
+    loadDashboard();
+
+  }else{
+
+    showStatus(
+      "loginStatus",
+      valueOf(
+        result,
+        "message",
+        "error"
+      ) ||
+      "Admin Login failed",
+      "error"
+    );
+
+  }
+
+}
+
+
+
+/* =====================================================
+   LOGOUT
+   ===================================================== */
+
+function adminLogout(){
+
+  localStorage.removeItem(
+    "LMC_ADMIN_TOKEN"
+  );
+
+
+  document
+    .getElementById(
+      "adminArea"
+    )
+    .classList.add("hidden");
+
+
+  document
+    .getElementById(
+      "loginBox"
+    )
+    .classList.remove("hidden");
+
+
+  document
+    .getElementById(
+      "adminPassword"
+    )
+    .value="";
+
+}
+
+
+
+/* =====================================================
+   SECTION
+   ===================================================== */
+
+function showSection(section){
+
+  document
+    .getElementById(
+      "dashboardSection"
+    )
+    .classList.add("hidden");
+
+
+  document
+    .getElementById(
+      "usersSection"
+    )
+    .classList.add("hidden");
+
+
+  document
+    .getElementById(
+      "depositsSection"
+    )
+    .classList.add("hidden");
+
+
+  document
+    .getElementById(
+      "withdrawalsSection"
+    )
+    .classList.add("hidden");
+
+
+  if(section==="dashboard"){
+
+    document
+      .getElementById(
+        "dashboardSection"
+      )
+      .classList.remove("hidden");
+
+  }
+
+
+  if(section==="users"){
+
+    document
+      .getElementById(
+        "usersSection"
+      )
+      .classList.remove("hidden");
+
+  }
+
+
+  if(section==="deposits"){
+
+    document
+      .getElementById(
+        "depositsSection"
+      )
+      .classList.remove("hidden");
+
+  }
+
+
+  if(section==="withdrawals"){
+
+    document
+      .getElementById(
+        "withdrawalsSection"
+      )
+      .classList.remove("hidden");
+
+  }
+
+}
+
+
+
+/* =====================================================
+   DASHBOARD
+   ===================================================== */
+
+async function loadDashboard(){
+
+  showSection("dashboard");
+
+
+  showStatus(
+    "dashboardStatus",
+    "Dashboard loading...",
+    "info"
+  );
+
+
+  const result =
+    await apiPost(
+      "adminDashboard",
+      {
+        token:getToken()
+      }
+    );
+
+
+  if(
+    !result ||
+    !result.success
+  ){
+
+    showStatus(
+      "dashboardStatus",
+      valueOf(
+        result,
+        "message",
+        "error"
+      ) ||
+      "Dashboard load failed",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  showStatus(
+    "dashboardStatus",
+    "Dashboard loaded",
+    "success"
+  );
+
+
+  const data =
+    result.data ||
+    result;
+
+
+  const totalUsers =
+    valueOf(
+      data,
+      "totalUsers",
+      "TotalUsers",
+      "users"
+    );
+
+
+  const totalBalance =
+    valueOf(
+      data,
+      "totalBalance",
+      "TotalBalance",
+      "balance"
+    );
+
+
+  const totalWithdrawals =
+    valueOf(
+      data,
+      "totalWithdrawals",
+      "TotalWithdrawals",
+      "withdrawals"
+    );
+
+
+  const totalDeposits =
+    valueOf(
+      data,
+      "totalDeposits",
+      "TotalDeposits",
+      "deposits"
+    );
+
+
+  document
+    .getElementById(
+      "dashboardData"
+    )
+    .innerHTML=`
+
+      <div class="item">
+
+        👥 <b>Total Users</b>
+
+        <div class="amount">
+          ${escapeHtml(totalUsers)}
+        </div>
+
+      </div>
+
+
+      <div class="item">
+
+        💰 <b>Total Balance</b>
+
+        <div class="amount">
+          ৳ ${escapeHtml(totalBalance)}
+        </div>
+
+      </div>
+
+
+      <div class="item">
+
+        💳 <b>Total Deposits</b>
+
+        <div class="amount">
+          ৳ ${escapeHtml(totalDeposits)}
+        </div>
+
+      </div>
+
+
+      <div class="item">
+
+        💸 <b>Total Withdrawals</b>
+
+        <div class="amount">
+          ৳ ${escapeHtml(totalWithdrawals)}
+        </div>
+
+      </div>
+
+    `;
+
+}
+
+
+
+/* =====================================================
+   USERS
+   ===================================================== */
+
+async function loadUsers(){
+
+  showSection("users");
+
+
+  document
+    .getElementById(
+      "usersData"
+    )
+    .innerHTML =
+      '<div class="loading">'+
+      'Loading users...'+
+      '</div>';
+
+
+  const result =
+    await apiPost(
+      "adminUsers",
+      {
+        token:getToken()
+      }
+    );
+
+
+  if(
+    !result ||
+    !result.success
+  ){
+
+    showStatus(
+      "usersStatus",
+      valueOf(
+        result,
+        "message",
+        "error"
+      ) ||
+      "Users load failed",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const raw =
+    result.data ||
+    result.users ||
+    [];
+
+
+  const users =
+    Array.isArray(raw)
+      ? raw
+      : (
+          raw.users ||
+          raw.Users ||
+          raw.data ||
+          []
+        );
+
+
+  if(!users.length){
+
+    document
+      .getElementById(
+        "usersData"
+      )
+      .innerHTML =
+        '<div class="loading">'+
+        'No users found'+
+        '</div>';
+
+    return;
+
+  }
+
+
+  let html="";
+
+
+  users.forEach(user=>{
+
+    const id =
+      valueOf(
+        user,
+        "UserID",
+        "userId",
+        "User Id",
+        "ID",
+        "id"
+      );
+
+
+    const name =
+      valueOf(
+        user,
+        "Name",
+        "name"
+      );
+
+
+    const phone =
+      valueOf(
+        user,
+        "Phone",
+        "phone"
+      );
+
+
+    const balance =
+      valueOf(
+        user,
+        "Balance",
+        "balance",
+        "Ba;ance",
+        "Ba;ance"
+      );
+
+
+    const status =
+      valueOf(
+        user,
+        "Status",
+        "status"
+      );
+
+
+    html+=`
+
+      <div class="item">
+
+        <b>
+          👤 ${escapeHtml(name)}
+        </b>
+
+        <div class="small">
+          User ID:
+          ${escapeHtml(id)}
+        </div>
+
+        <div class="small">
+          Phone:
+          ${escapeHtml(phone)}
+        </div>
+
+        <div class="small">
+          Status:
+          ${escapeHtml(status)}
+        </div>
+
+        <div class="amount">
+          Balance:
+          ৳ ${escapeHtml(balance)}
+        </div>
+
+        <hr>
+
+        <input
+          type="number"
+          id="add_${escapeHtml(id)}"
+          placeholder="Balance amount"
+          min="1"
+        >
+
+        <input
+          type="text"
+          id="note_${escapeHtml(id)}"
+          placeholder="Admin note"
+        >
+
+        <button
+          onclick="addBalance('${escapeHtml(id)}')"
+        >
+          ➕ Add Balance
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+
+  document
+    .getElementById(
+      "usersData"
+    )
+    .innerHTML=html;
+
+}
+
+
+
+/* =====================================================
+   ADD BALANCE
+   ===================================================== */
+
+async function addBalance(userId){
+
+  const amountEl =
+    document.getElementById(
+      "add_"+userId
+    );
+
+
+  const noteEl =
+    document.getElementById(
+      "note_"+userId
+    );
+
+
+  const amount =
+    Number(
+      amountEl.value
+    );
+
+
+  const note =
+    noteEl.value.trim();
+
+
+  if(
+    !amount ||
+    amount<=0
+  ){
+
+    alert(
+      "সঠিক amount দিন"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !confirm(
+      "এই user-এর balance-এ ৳"+
+      amount+
+      " যোগ করবেন?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const result =
+    await apiPost(
+      "adminAddBalance",
+      {
+        token:getToken(),
+        userId:userId,
+        amount:amount,
+        note:note
+      }
+    );
+
+
+  if(
+    result &&
+    result.success
+  ){
+
+    alert(
+      valueOf(
+        result,
+        "message"
+      ) ||
+      "Balance added successfully"
+    );
+
+
+    loadUsers();
+
+  }else{
+
+    alert(
+      valueOf(
+        result,
+        "message",
+        "error"
+      ) ||
+      "Balance update failed"
+    );
+
+  }
+
+}
+
+
+
+/* =====================================================
+   DEPOSITS
+   ===================================================== */
+
+async function loadDeposits(){
+
+  showSection("deposits");
+
+
+  document
+    .getElementById(
+      "depositsData"
+    )
+    .innerHTML =
+      '<div class="loading">'+
+      'Loading deposits...'+
+      '</div>';
+
+
+  const result =
+    await apiPost(
+      "adminDeposits",
+      {
+        token:getToken()
+      }
+    );
+
+
+  console.log(
+    "ADMIN DEPOSITS RESPONSE:",
+    result
+  );
+
+
+  if(
+    !result ||
+    !result.success
+  ){
+
+    showStatus(
+      "depositsStatus",
+      valueOf(
+        result,
+        "message",
+        "error"
+      ) ||
+      "Deposits load failed",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  showStatus(
+    "depositsStatus",
+    "Deposits loaded",
+    "success"
+  );
+
+
+  const raw =
+    result.data ||
+    result.deposits ||
+    result.Deposits ||
+    [];
+
+
+  const deposits =
+    Array.isArray(raw)
+      ? raw
+      : (
+          raw.deposits ||
+          raw.Deposits ||
+          raw.data ||
+          []
+        );
+
+
+  console.log(
+    "DEPOSIT ARRAY:",
+    deposits
+  );
+
+
+  if(!deposits.length){
+
+    document
+      .getElementById(
+        "depositsData"
+      )
+      .innerHTML =
+        '<div class="loading">'+
+        'No deposit requests found'+
+        '</div>';
+
+    return;
+
+  }
+
+
+  let html="";
+
+
+  deposits.forEach(item=>{
+
+
+    /* ============================
+       ALL POSSIBLE FIELD NAMES
+       ============================ */
+
+    const id =
+      valueOf(
+        item,
+        "DepositID",
+        "depositId",
+        "DepositId",
+        "depositID",
+        "ID",
+        "id"
+      );
+
+
+    const userId =
+      valueOf(
+        item,
+        "UserID",
+        "userId",
+        "Userid",
+        "UserId",
+        "User ID",
+        "userid"
+      );
+
+
+    const method =
+      valueOf(
+        item,
+        "Method",
+        "method",
+        "PaymentMethod",
+        "paymentMethod"
+      );
+
+
+    const account =
+      valueOf(
+        item,
+        "AccountNumber",
+        "accountNumber",
+        "Account",
+        "account",
+        "PaymentAccount",
+        "paymentAccount"
+      );
+
+
+    const amountRaw =
+      valueOf(
+        item,
+        "Amount",
+        "amount",
+        "DepositAmount",
+        "depositAmount"
+      );
+
+
+    const amount =
+      numberValue(
+        amountRaw
+      );
+
+
+    const trx =
+      valueOf(
+        item,
+        "TransactionID",
+        "transactionId",
+        "TransactionId",
+        "transactionID",
+        "TrxID",
+        "trxId",
+        "TrxId"
+      );
+
+
+    const status =
+      valueOf(
+        item,
+        "Status",
+        "status"
+      );
+
+
+    const requested =
+      valueOf(
+        item,
+        "RequestedAt",
+        "requestedAt",
+        "RequestAt",
+        "requestAt",
+        "CreatedAt",
+        "createdAt"
+      );
+
+
+    const note =
+      valueOf(
+        item,
+        "Note",
+        "note",
+        "UserNote",
+        "userNote"
+      );
+
+
+    const adminNote =
+      valueOf(
+        item,
+        "AdminNote",
+        "adminNote",
+        "Adminnote"
+      );
+
+
+    let statusClass =
+      "deposit-pending";
+
+
+    const statusLower =
+      String(status)
+        .toLowerCase();
+
+
+    if(
+      statusLower==="approved"
+    ){
+
+      statusClass =
+        "deposit-approved";
+
+    }
+
+
+    if(
+      statusLower==="rejected"
+    ){
+
+      statusClass =
+        "deposit-rejected";
+
+    }
+
+
+    /* ============================
+       DEPOSIT CARD
+       ============================ */
+
+    html+=`
+
+      <div class="item ${statusClass}">
+
+        <b>
+          💰 Deposit #${escapeHtml(id)}
+        </b>
+
+
+        <div class="small">
+          User ID:
+          ${escapeHtml(userId || "—")}
+        </div>
+
+
+        <div class="small">
+          Method:
+          ${escapeHtml(method || "—")}
+        </div>
+
+
+        <div class="small">
+          Account:
+          ${escapeHtml(account || "—")}
+        </div>
+
+
+        <div class="amount">
+          ৳ ${escapeHtml(amount)}
+        </div>
+
+
+        <div class="small">
+          Transaction ID:
+          ${escapeHtml(trx || "—")}
+        </div>
+
+
+        <div class="small">
+          Status:
+          ${escapeHtml(status || "—")}
+        </div>
+
+
+        <div class="small">
+          Requested:
+          ${escapeHtml(requested || "—")}
+        </div>
+
+
+        <div class="small">
+          Note:
+          ${escapeHtml(note || "—")}
+        </div>
+
+
+        <div class="small">
+          Admin Note:
+          ${escapeHtml(adminNote || "—")}
+        </div>
+
+
+        ${
+          statusLower==="pending"
+          ? `
+
+            <input
+              type="text"
+              id="depNote_${escapeHtml(id)}"
+              placeholder="Admin note"
+            >
+
+            <div class="row">
+
+              <button
+                onclick="processDeposit(
+                  '${escapeHtml(id)}',
+                  'Approved'
+                )"
+              >
+                ✅ Approve
+              </button>
+
+
+              <button
+                class="danger"
+                onclick="processDeposit(
+                  '${escapeHtml(id)}',
+                  'Rejected'
+                )"
+              >
+                ❌ Reject
+              </button>
+
+            </div>
+
+          `
+          : `
+
+            <div class="status ${
+              statusLower==="approved"
+                ? "success"
+                : "error"
+            }">
+
+              ${
+                statusLower==="approved"
+                  ? "✅ এই Deposit Approved"
+                  : "❌ এই Deposit Rejected"
+              }
+
+            </div>
+
+          `
+        }
+
+      </div>
+
+    `;
+
+  });
+
+
+  document
+    .getElementById(
+      "depositsData"
+    )
+    .innerHTML=html;
+
+}
+
+
+
+/* =====================================================
+   PROCESS DEPOSIT
+   ===================================================== */
+
+async function processDeposit(
+  depositId,
+  status
+){
+
+  const noteEl =
+    document.getElementById(
+      "depNote_"+depositId
+    );
+
+
+  const note =
+    noteEl
+      ? noteEl.value.trim()
+      : "";
+
+
+  if(
+    !confirm(
+      "Deposit "+
+      status+
+      " করবেন?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  showStatus(
+    "depositsStatus",
+    "Deposit processing...",
+    "info"
+  );
+
+
+  const result =
+    await apiPost(
+      "adminProcessDeposit",
+      {
+        token:getToken(),
+        depositId:depositId,
+        status:status,
+        note:note
+      }
+    );
+
+
+  console.log(
+    "PROCESS DEPOSIT RESPONSE:",
+    result
+  );
+
+
+  if(
+    result &&
+    result.success
+  ){
+
+    let message =
+      valueOf(
+        result,
+        "message"
+      ) ||
+      "Deposit updated";
+
+
+    if(
+      status==="Approved" &&
+      result.newBalance !== undefined
+    ){
+
+      message +=
+        " | New Balance: ৳"+
+        result.newBalance;
+
+    }
+
+
+    alert(message);
+
+
+    loadDeposits();
+
+  }else{
+
+    alert(
+      valueOf(
+        result,
+        "message",
+        "error"
+      ) ||
+      "Deposit update failed"
+    );
+
+  }
+
+}
+
+
+
+/* =====================================================
+   WITHDRAWALS
+   ===================================================== */
+
+async function loadWithdrawals(){
+
+  showSection("withdrawals");
+
+
+  document
+    .getElementById(
+      "withdrawalsData"
+    )
+    .innerHTML =
+      '<div class="loading">'+
+      'Loading withdrawals...'+
+      '</div>';
+
+
+  const result =
+    await apiPost(
+      "adminWithdrawals",
+      {
+        token:getToken()
+      }
+    );
+
+
+  if(
+    !result ||
+    !result.success
+  ){
+
+    showStatus(
+      "withdrawalsStatus",
+      valueOf(
+        result,
+        "message",
+        "error"
+      ) ||
+      "Withdrawals load failed",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  showStatus(
+    "withdrawalsStatus",
+    "Withdrawals loaded",
+    "success"
+  );
+
+
+  const raw =
+    result.data ||
+    result.withdrawals ||
+    [];
+
+
+  const withdrawals =
+    Array.isArray(raw)
+      ? raw
+      : (
+          raw.withdrawals ||
+          raw.Withdrawals ||
+          raw.data ||
+          []
+        );
+
+
+  if(!withdrawals.length){
+
+    document
+      .getElementById(
+        "withdrawalsData"
+      )
+      .innerHTML =
+        '<div class="loading">'+
+        'No withdrawal requests found'+
+        '</div>';
+
+    return;
+
+  }
+
+
+  let html="";
+
+
+  withdrawals.forEach(item=>{
+
+    const id =
+      valueOf(
+        item,
+        "RequestID",
+        "requestId",
+        "RequestId",
+        "ID",
+        "id"
+      );
+
+
+    const userId =
+      valueOf(
+        item,
+        "UserID",
+        "userId",
+        "UserId"
+      );
+
+
+    const method =
+      valueOf(
+        item,
+        "Method",
+        "method"
+      );
+
+
+    const account =
+      valueOf(
+        item,
+        "AccountNumber",
+        "accountNumber",
+        "Account",
+        "account"
+      );
+
+
+    const amount =
+      numberValue(
+        valueOf(
+          item,
+          "Amount",
+          "amount"
+        )
+      );
+
+
+    const status =
+      valueOf(
+        item,
+        "Status",
+        "status"
+      );
+
+
+    const requested =
+      valueOf(
+        item,
+        "RequestedAt",
+        "requestedAt"
+      );
+
+
+    const adminNote =
+      valueOf(
+        item,
+        "AdminNote",
+        "adminNote"
+      );
+
+
+    html+=`
+
+      <div class="item">
+
+        <b>
+          💸 Request #${escapeHtml(id)}
+        </b>
+
+
+        <div class="small">
+          User ID:
+          ${escapeHtml(userId || "—")}
+        </div>
+
+
+        <div class="small">
+          Method:
+          ${escapeHtml(method || "—")}
+        </div>
+
+
+        <div class="small">
+          Account:
+          ${escapeHtml(account || "—")}
+        </div>
+
+
+        <div class="amount">
+          ৳ ${escapeHtml(amount)}
+        </div>
+
+
+        <div class="small">
+          Status:
+          ${escapeHtml(status || "—")}
+        </div>
+
+
+        <div class="small">
+          Requested:
+          ${escapeHtml(requested || "—")}
+        </div>
+
+
+        <div class="small">
+          Admin Note:
+          ${escapeHtml(adminNote || "—")}
+        </div>
+
+
+        <input
+          type="text"
+          id="wdNote_${escapeHtml(id)}"
+          placeholder="Admin note"
+        >
+
+
+        <div class="row">
+
+          <button
+            onclick="processWithdrawal(
+              '${escapeHtml(id)}',
+              'Approved'
+            )"
+          >
+            ✅ Approve
+          </button>
+
+
+          <button
+            class="danger"
+            onclick="processWithdrawal(
+              '${escapeHtml(id)}',
+              'Rejected'
+            )"
+          >
+            ❌ Reject
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+
+  document
+    .getElementById(
+      "withdrawalsData"
+    )
+    .innerHTML=html;
+
+}
+
+
+
+/* =====================================================
+   PROCESS WITHDRAWAL
+   ===================================================== */
+
+async function processWithdrawal(
+  requestId,
+  status
+){
+
+  const noteEl =
+    document.getElementById(
+      "wdNote_"+requestId
+    );
+
+
+  const note =
+    noteEl
+      ? noteEl.value.trim()
+      : "";
+
+
+  if(
+    !confirm(
+      "Withdrawal "+
+      status+
+      " করবেন?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const result =
+    await apiPost(
+      "adminProcessWithdrawal",
+      {
+        token:getToken(),
+        requestId:requestId,
+        status:status,
+        note:note
+      }
+    );
+
+
+  if(
+    result &&
+    result.success
+  ){
+
+    alert(
+      valueOf(
+        result,
+        "message"
+      ) ||
+      "Withdrawal updated"
+    );
+
+
+    loadWithdrawals();
+
+  }else{
+
+    alert(
+      valueOf(
+        result,
+        "message",
+        "error"
+      ) ||
+      "Withdrawal update failed"
+    );
+
+  }
+
+}
+
+
+
+/* =====================================================
+   PAGE LOAD
+   ===================================================== */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    const token =
+      getToken();
+
+
+    if(token){
+
+      document
+        .getElementById(
+          "loginBox"
+        )
+        .classList.add("hidden");
+
+
+      document
+        .getElementById(
+          "adminArea"
+        )
+        .classList.remove("hidden");
+
+
+      loadDashboard();
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
